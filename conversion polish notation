@@ -1,0 +1,264 @@
+#include <iostream>
+#include <stack>
+#include <algorithm>
+ 
+using namespace std;
+ 
+bool isOperand(char c)
+{
+    if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+ 
+string PrefixToInfix(string prefix)
+{
+    stack<string> s;
+    for (int i = prefix.length() - 1; i >= 0; i--) {
+        if (isOperand(prefix[i])) {
+            string op(1, prefix[i]);
+            //string op = prefix[i];
+            s.push(op);
+        }
+        else {
+            string op1 = s.top();
+            s.pop();
+            string op2 = s.top();
+            s.pop();
+            s.push("(" + op1 + prefix[i] + op2 + ")");
+        }
+    }
+    return s.top();
+}
+
+//Infix To Perfix
+
+bool isOperator(char c)
+{
+    if (c == '+' || c == '-' || c == '*' || c == '/' || c == '^') {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+ 
+int precedence(char c)
+{
+    if (c == '^')
+        return 3;
+    else if (c == '*' || c == '/')
+        return 2;
+    else if (c == '+' || c == '-')
+        return 1;
+    else
+        return -1;
+}
+ 
+string InfixToPrefix(stack<char> s, string infix)
+{
+    string prefix;
+    reverse(infix.begin(), infix.end());
+ 
+    for (int i = 0; i < infix.length(); i++) {
+        if (infix[i] == '(') {
+            infix[i] = ')';
+        }
+        else if (infix[i] == ')') {
+            infix[i] = '(';
+        }
+    }
+    for (int i = 0; i < infix.length(); i++) {
+        if ((infix[i] >= 'a' && infix[i] <= 'z') || (infix[i] >= 'A' && infix[i] <= 'Z')) {
+            prefix += infix[i];
+        }
+        else if (infix[i] == '(') {
+            s.push(infix[i]);
+        }
+        else if (infix[i] == ')') {
+            while ((s.top() != '(') && (!s.empty())) {
+                prefix += s.top();
+                s.pop();
+            }
+ 
+            if (s.top() == '(') {
+                s.pop();
+            }
+        }
+        else if (isOperator(infix[i])) {
+            if (s.empty()) {
+                s.push(infix[i]);
+            }
+            else {
+                if (precedence(infix[i]) > precedence(s.top())) {
+                    s.push(infix[i]);
+                }
+                else if ((precedence(infix[i]) == precedence(s.top()))
+                    && (infix[i] == '^')) {
+                    while ((precedence(infix[i]) == precedence(s.top()))
+                        && (infix[i] == '^')) {
+                        prefix += s.top();
+                        s.pop();
+                    }
+                    s.push(infix[i]);
+                }
+                else if (precedence(infix[i]) == precedence(s.top())) {
+                    s.push(infix[i]);
+                }
+                else {
+                    while ((!s.empty()) && (precedence(infix[i]) < precedence(s.top()))) {
+                        prefix += s.top();
+                        s.pop();
+                    }
+                    s.push(infix[i]);
+                }
+            }
+        }
+    }
+ 
+    while (!s.empty()) {
+        prefix += s.top();
+        s.pop();
+    }
+ 
+    reverse(prefix.begin(), prefix.end());
+    return prefix;
+}
+
+//Postfix to Infix
+
+boolisOperand(char c)
+{
+    if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+ 
+string PostfixToInfix(string postfix)
+{
+    stack<string> s;
+    for (int i = 0; i < postfix.length(); i++) {
+        if (isOperand(postfix[i])) {
+            string op(1, postfix[i]);
+            //string op=postfix[i];
+            s.push(op);
+        }
+        else {
+            string op1 = s.top();
+            s.pop();
+            string op2 = s.top();
+            s.pop();
+            s.push("(" + op2 + postfix[i] + op1 + ")");
+        }
+    }
+ 
+    return s.top();
+}
+ 
+int main()
+{
+	
+	cout << "Interconversion of Polish method through Stack" << endl;
+	int n;
+	cout << "For Infex to Perfix press ---1" << endl;
+	cout << "For prefix to Infix press ---2" << endl;
+	cout << "For Infix to postfix press---3"<<endl;
+	cout << "For postfix to Infix press---4"<<endl;
+	
+    
+    cin>>n;
+    
+    switch(n){
+    	
+    	case 2: // Prefix to Infix
+    		
+			{
+				//Algorithm
+				cout <<"---------PSEUDOCODE---------"<<endl;
+				cout<<endl;
+				cout << "Function PerfixTOInfex(String Perfix) \n 1.stacks \n 2.LOOP:=perfix.;enght-1To 0 \n 2.1 If perfix[i] is Oprent-> \n 2.1.1 s.push(perfix)[i] " <<endl;
+				cout <<"2.2 Else if perfix[i] is Operator-> \n 2.2.1 op1 = s.top() \n 2.2.2 s.pop() \n 2.2.3 0p2 = s.top() \n 2.2.4 s.pop() \n 2.2.5 exp = '('+op1+perfix[i]+op2+')'"<<endl;
+				cout << "2.2.6 s.push(exp) \n END LOOP \n 3. RETURN s.top"<<endl; 
+				// End of Algorithm
+				cout <<endl;
+				cout <<endl;
+				string infix, prefix;
+   			 cout << "Enter a PREFIX Expression :" << endl;
+    	    	cin >> prefix;
+    		cout << "PREFIX EXPRESSION: " << prefix << endl;
+    		    infix = PrefixToInfix(prefix);
+    		cout << endl
+         		<< "INFIX EXPRESSION: " << infix;
+ 
+    		return 0;
+    		break;
+			}
+    		 
+    	case 1:  // Infix To Perfix
+    		{
+    			//Algorithm
+				cout <<"---------PSEUDOCODE---------"<<endl;
+				cout<<"if infex[i] is Operand -->perfix+=infix[i] \n ELSE IF infix[i] is'('-->Stack.push(infix[i])\n ELSE IF infix [i] is'('-->is POP & print Stack values /n till '(' is found & stack NOT Emputy.POP that'('"<<endl;
+				cout<<"ELSE IF infix[i] iz a OPREATOR (+,-,*,/,^)--> \n IF Stack is Emputy-->PUSH opreator on stack \n ELSE--> \n If precendence(infix[i])>precendence(stack.top))\n --> PUSH infix[i] on stack"<<endl;
+				cout<<"ELSE IF precendenc (infix[i])==precendence(stack.top) \n && infix[i]=='^' \n -->POP & ptint top of stack till this condition is ture,\n -->PUSH infix[i] on stack \n ELSEprecendence(infix[i]==precendence(stack.top)"<<endl;
+				cout<<"-->PUSH infix[i] on stack \n ELSE IF precendence(infix[i]<precendence(stack.top) \n -->POP & print till Stack not emputy && \n precendence(infic[i])<precendence(stack.top\n -->PUSH infix[i] ontoSatck"<<endl;
+				cout<<"END LOOP \n POP & PRINT Remaining Elements of stack \n prefix = reverse(prefix) & RETURN"<<endl;
+				
+				// End of Algorithm
+				cout<<endl;
+				
+				
+    			 string infix, prefix;
+   			 cout << "Enter a Infix Expression :" << endl;
+    		 cin >> infix;
+    		 stack<char> stack;
+   			 cout << "INFIX EXPRESSION: " << infix << endl;
+    		 prefix = InfixToPrefix(stack, infix);
+   			 cout << endl
+        		 << "PREFIX EXPRESSION: " << prefix;
+ 
+   			 return 0;
+    	    break;
+    			
+			}
+			
+		case 3:
+			{
+				
+			}
+			
+			
+			break;
+			
+		case 4:// Postfix to Infix
+			{
+				//Algorithm
+				cout<<" Function postfixToInfix(String postfix) \n 1. stack s\n 2.LOOP:!=0 to postfix.lengh \n 2.1 IF postfix[i] is OPRE"<<endl;
+				
+				// Algorith END
+				 string infix, postfix;
+  				 cout << "Enter a POSTFIX Expression :" << endl;
+    			 cin >> postfix;
+    			 cout << "POSTFIX EXPRESSION: " << postfix << endl;
+    			 infix = PostfixToInfix(postfix);
+    			 cout << endl
+         		<< "INFIX EXPRESSION: " << infix;
+ 
+   				 return 0;
+			}
+			
+			break;
+    		
+    	    default:
+    		cout << "You Intered wrong value";
+    		break;
+	}
+	
+   
+}
